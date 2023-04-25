@@ -1,4 +1,5 @@
 import random
+import time
 
 from PySide6.QtCore import QObject, Signal, Slot
 from selenium import webdriver
@@ -67,7 +68,7 @@ class Browser(QObject):
             self.wait.until(EC.visibility_of_element_located(
                 (By.XPATH, '/html/body/div/div/div[1]/div[2]/button')))
         except Exception:
-            self.driver.close()
+            self.driver.quit()
             self.FEEDBACK_ERROR.emit("登录页面加载失败！")
         else:
             self.FEEDBACK_PROGRESS.emit("正在登录...")
@@ -89,14 +90,14 @@ class Browser(QObject):
                     (By.XPATH,
                      '/html/body/div[1]/div/section/section/div/div[1]/div/div/div[1]/div[3]/div[2]/div[1]/div[2]/div[2]/div[4]/div')))
         except Exception:
-            self.driver.close()
+            self.driver.quit()
             self.FEEDBACK_ERROR.emit("用户名密码错误 或 主页加载失败！")
         else:
             self.FEEDBACK_PROGRESS.emit("正在打开每日反馈页面...")
             feedback = self.driver.find_element(By.XPATH,
                                                 '/html/body/div[1]/div/section/section/div/div[1]/div/div/div[1]/div[2]/div[2]/div[3]/div')
             if "disabled" in feedback.get_attribute("class"):
-                self.driver.close()
+                self.driver.quit()
                 self.FEEDBACK_WARNING.emit()
             else:
                 feedback.click()
@@ -110,7 +111,7 @@ class Browser(QObject):
                 (By.XPATH,
                  '/html/body/div[1]/div/section/section/div/div[1]/div/div/div[1]/div[2]/div[1]/div[2]/div[2]/button')))
         except Exception:
-            self.driver.close()
+            self.driver.quit()
             self.FEEDBACK_ERROR.emit("每日反馈页面加载失败！")
         else:
             items = self.driver.find_element(By.XPATH,
@@ -119,7 +120,7 @@ class Browser(QObject):
                 items.click()
                 self.FEEDBACK_PROGRESS.emit("正在打开反馈表单...")
             elif items.text == "查看详情":
-                self.driver.close()
+                self.driver.quit()
                 self.FEEDBACK_WARNING.emit()
 
         """ 填写反馈表单 """
@@ -127,7 +128,7 @@ class Browser(QObject):
         try:
             self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'question-list')))
         except Exception:
-            self.driver.close()
+            self.driver.quit()
             self.FEEDBACK_ERROR.emit("反馈表单加载失败！")
         else:
             self.FEEDBACK_PROGRESS.emit("正在填写反馈表单...")
@@ -147,7 +148,7 @@ class Browser(QObject):
             # self.wait.until(EC.visibility_of_element_located((By.XPATH,
             #                                                   '/html/body/div[1]/div/section/section/div/div[1]/div/div/div[1]/div[2]/div[1]/div/div/div[2]/div[16]/div[3]/button')))
         except Exception:
-            self.driver.close()
+            self.driver.quit()
             self.FEEDBACK_ERROR.emit("反馈表单提交失败！")
         else:
             self.FEEDBACK_PROGRESS.emit("正在提交反馈表单...")
@@ -165,5 +166,7 @@ class Browser(QObject):
             # submit_button.click()
 
         """ 退出浏览器 """
+        # todo: 程序运行完成后会在后台留下一个浏览器进程，需要手动关闭
         self.driver.quit()
+        time.sleep(1)
         self.FEEDBACK_COMPLETE.emit()

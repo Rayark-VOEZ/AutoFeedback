@@ -23,13 +23,14 @@ class Ui_AutoFeedback(object):
     def setupUi(self, AutoFeedback):
         if not AutoFeedback.objectName():
             AutoFeedback.setObjectName(u"AutoFeedback")
-        AutoFeedback.resize(400, 480)
+        AutoFeedback.resize(400, 460)
+        AutoFeedback.setMaximumSize(QSize(400, 480))
         self.submitButton = QPushButton(AutoFeedback)
         self.submitButton.setObjectName(u"submitButton")
-        self.submitButton.setGeometry(QRect(160, 440, 80, 30))
+        self.submitButton.setGeometry(QRect(20, 410, 360, 30))
         self.userinfoGroup = QGroupBox(AutoFeedback)
         self.userinfoGroup.setObjectName(u"userinfoGroup")
-        self.userinfoGroup.setGeometry(QRect(20, 140, 360, 110))
+        self.userinfoGroup.setGeometry(QRect(20, 140, 360, 80))
         self.ACheck = QCheckBox(self.userinfoGroup)
         self.ACheck.setObjectName(u"ACheck")
         self.ACheck.setGeometry(QRect(10, 20, 150, 20))
@@ -44,7 +45,7 @@ class Ui_AutoFeedback(object):
         self.DCheck.setGeometry(QRect(190, 50, 150, 20))
         self.suggestionGroup = QGroupBox(AutoFeedback)
         self.suggestionGroup.setObjectName(u"suggestionGroup")
-        self.suggestionGroup.setGeometry(QRect(20, 260, 360, 140))
+        self.suggestionGroup.setGeometry(QRect(20, 230, 360, 140))
         self.suggestionEdit = QTextEdit(self.suggestionGroup)
         self.suggestionEdit.setObjectName(u"suggestionEdit")
         self.suggestionEdit.setGeometry(QRect(10, 30, 340, 70))
@@ -73,7 +74,10 @@ class Ui_AutoFeedback(object):
         self.passwordEdit.setEchoMode(QLineEdit.Password)
         self.stateLabel = QLabel(AutoFeedback)
         self.stateLabel.setObjectName(u"stateLabel")
-        self.stateLabel.setGeometry(QRect(20, 410, 360, 20))
+        self.stateLabel.setGeometry(QRect(90, 380, 290, 20))
+        self.label = QLabel(AutoFeedback)
+        self.label.setObjectName(u"label")
+        self.label.setGeometry(QRect(20, 380, 60, 20))
 
         self.retranslateUi(AutoFeedback)
 
@@ -96,12 +100,13 @@ class Ui_AutoFeedback(object):
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Microsoft YaHei UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p align=\"right\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">--Submit by AutoFeedback. Version 2.0</p></body></html>", None))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">--Submit by AutoFeedback. Version 2.0</p></body></html>", None))
         self.anonymityCheck.setText(QCoreApplication.translate("AutoFeedback", u"\u533f\u540d\u53cd\u9988", None))
         self.levelGroup.setTitle(QCoreApplication.translate("AutoFeedback", u"\u7528\u6237\u4fe1\u606f", None))
         self.usernameLabel.setText(QCoreApplication.translate("AutoFeedback", u"\u7528\u6237\u540d", None))
         self.passwordLabel.setText(QCoreApplication.translate("AutoFeedback", u"\u5bc6\u7801", None))
         self.rememberCheck.setText(QCoreApplication.translate("AutoFeedback", u"\u8bb0\u4f4f\u8d26\u53f7\u5bc6\u7801", None))
         self.stateLabel.setText("")
+        self.label.setText(QCoreApplication.translate("AutoFeedback", u"\u5f53\u524d\u72b6\u6001\uff1a", None))
     # retranslateUi
 
