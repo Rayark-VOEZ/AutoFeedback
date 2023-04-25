@@ -1,13 +1,14 @@
 import random
-import time
 
 from PySide6.QtCore import QObject, Signal, Slot
 from selenium import webdriver
 from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
-from selenium.webdriver.edge.service import Service
+from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
+# 使用webdriver_manager
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
 
 class Browser(QObject):
@@ -32,19 +33,8 @@ class Browser(QObject):
         self.__isAnonymous = isAnonymous
         self.__random = random.Random()
 
-        """ 配置驱动 """
-        self.service = Service("msedgedriver.exe")
-        self.options = webdriver.EdgeOptions()
-        self.options.add_argument("--headless")
-        self.options.add_experimental_option("excludeSwitches", ["enable-logging"])
-
-        """ 配置浏览器 """
-        self.driver = webdriver.Edge(service=self.service, options=self.options)
-        # self.driver = webdriver.Edge(service=self.service)
-        # self.driver.set_window_size(960, 480)
-
-        """ 配置等待器 """
-        self.wait = WebDriverWait(self.driver, 10)
+    async def download_driver(self):
+        return
 
     @Slot()
     def feedback_main(self) -> None:
@@ -52,6 +42,26 @@ class Browser(QObject):
         反馈主函数
         :return: None
         """
+
+        """ 配置驱动 """
+        self.FEEDBACK_PROGRESS.emit("正在下载浏览器驱动...")
+        self.service = EdgeService(EdgeChromiumDriverManager(path="./").install())
+
+
+        """ 配置浏览器启动参数 """
+        self.FEEDBACK_PROGRESS.emit("配置浏览器启动参数...")
+        self.options = webdriver.EdgeOptions()
+        # self.options.add_argument("--headless")  # 无头模式
+        self.options.add_argument("--disable-gpu")  # 禁用GPU加速
+        self.options.add_experimental_option("excludeSwitches", ["enable-logging"])
+
+        """ 配置浏览器 """
+        self.FEEDBACK_PROGRESS.emit("配置浏览器...")
+        # self.driver = webdriver.Edge(service=self.service, options=self.options)
+        self.driver = webdriver.Edge(service=self.service, options=self.options)  # 使用webdriver_manager
+
+        """ 配置等待器 """
+        self.wait = WebDriverWait(self.driver, 10)
 
         """ 进入登录页面 """
         self.FEEDBACK_PROGRESS.emit("正在进入登录页面...")
@@ -166,7 +176,5 @@ class Browser(QObject):
             # submit_button.click()
 
         """ 退出浏览器 """
-        # todo: 程序运行完成后会在后台留下一个浏览器进程，需要手动关闭
         self.driver.quit()
-        time.sleep(1)
         self.FEEDBACK_COMPLETE.emit()

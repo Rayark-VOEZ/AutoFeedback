@@ -128,6 +128,7 @@ class Main(QWidget):
         reply = QMessageBox.information(self, "提示", "提交成功！点击确定退出软件。", QMessageBox.Ok)
         if reply == QMessageBox.Ok:
             self.thread.terminate()
+            sys.stdout.close()
             sys.exit()
 
     @Slot()
@@ -135,6 +136,7 @@ class Main(QWidget):
         reply = QMessageBox.warning(self, "警告", "反馈还未开始或今日已反馈！点击确定退出软件。", QMessageBox.Ok)
         if reply == QMessageBox.Ok:
             self.thread.terminate()
+            sys.stdout.close()
             sys.exit()
 
     @Slot()
@@ -142,6 +144,7 @@ class Main(QWidget):
         reply = QMessageBox.critical(self, "错误", f"{message}点击确定退出软件。", QMessageBox.Ok)
         if reply == QMessageBox.Ok:
             self.thread.terminate()
+            sys.stdout.close()
             sys.exit()
 
 
