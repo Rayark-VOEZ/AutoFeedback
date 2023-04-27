@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'AutoFeedback.ui'
+## Form generated from reading UI file 'auto_feedback.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.4.3
 ##
@@ -15,19 +15,19 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QCheckBox, QGroupBox, QLabel,
-    QLineEdit, QPushButton, QSizePolicy, QTextEdit,
-    QWidget)
+from PySide6.QtWidgets import (QAbstractSpinBox, QApplication, QCheckBox, QGroupBox,
+    QLabel, QLineEdit, QPushButton, QSizePolicy,
+    QSpinBox, QTextEdit, QWidget)
 
 class Ui_AutoFeedback(object):
     def setupUi(self, AutoFeedback):
         if not AutoFeedback.objectName():
             AutoFeedback.setObjectName(u"AutoFeedback")
-        AutoFeedback.resize(400, 460)
-        AutoFeedback.setMaximumSize(QSize(400, 480))
+        AutoFeedback.resize(400, 510)
+        AutoFeedback.setMaximumSize(QSize(400, 510))
         self.submitButton = QPushButton(AutoFeedback)
         self.submitButton.setObjectName(u"submitButton")
-        self.submitButton.setGeometry(QRect(20, 410, 360, 30))
+        self.submitButton.setGeometry(QRect(20, 470, 360, 30))
         self.userinfoGroup = QGroupBox(AutoFeedback)
         self.userinfoGroup.setObjectName(u"userinfoGroup")
         self.userinfoGroup.setGeometry(QRect(20, 140, 360, 80))
@@ -74,10 +74,26 @@ class Ui_AutoFeedback(object):
         self.passwordEdit.setEchoMode(QLineEdit.Password)
         self.stateLabel = QLabel(AutoFeedback)
         self.stateLabel.setObjectName(u"stateLabel")
-        self.stateLabel.setGeometry(QRect(90, 380, 290, 20))
+        self.stateLabel.setGeometry(QRect(90, 440, 290, 20))
         self.label = QLabel(AutoFeedback)
         self.label.setObjectName(u"label")
-        self.label.setGeometry(QRect(20, 380, 60, 20))
+        self.label.setGeometry(QRect(20, 440, 60, 20))
+        self.settingGroup = QGroupBox(AutoFeedback)
+        self.settingGroup.setObjectName(u"settingGroup")
+        self.settingGroup.setGeometry(QRect(20, 380, 360, 50))
+        self.displayCheck = QCheckBox(self.settingGroup)
+        self.displayCheck.setObjectName(u"displayCheck")
+        self.displayCheck.setGeometry(QRect(240, 20, 110, 20))
+        self.cacheLabel = QLabel(self.settingGroup)
+        self.cacheLabel.setObjectName(u"cacheLabel")
+        self.cacheLabel.setGeometry(QRect(10, 20, 80, 20))
+        self.cacheSpin = QSpinBox(self.settingGroup)
+        self.cacheSpin.setObjectName(u"cacheSpin")
+        self.cacheSpin.setGeometry(QRect(100, 20, 50, 20))
+        self.cacheSpin.setButtonSymbols(QAbstractSpinBox.UpDownArrows)
+        self.cacheSpin.setMinimum(1)
+        self.cacheSpin.setMaximum(30)
+        self.cacheSpin.setValue(7)
 
         self.retranslateUi(AutoFeedback)
 
@@ -100,7 +116,7 @@ class Ui_AutoFeedback(object):
 "li.unchecked::marker { content: \"\\2610\"; }\n"
 "li.checked::marker { content: \"\\2612\"; }\n"
 "</style></head><body style=\" font-family:'Microsoft YaHei UI'; font-size:9pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">--Submit by AutoFeedback. Version 2.0</p></body></html>", None))
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
         self.anonymityCheck.setText(QCoreApplication.translate("AutoFeedback", u"\u533f\u540d\u53cd\u9988", None))
         self.levelGroup.setTitle(QCoreApplication.translate("AutoFeedback", u"\u7528\u6237\u4fe1\u606f", None))
         self.usernameLabel.setText(QCoreApplication.translate("AutoFeedback", u"\u7528\u6237\u540d", None))
@@ -108,5 +124,8 @@ class Ui_AutoFeedback(object):
         self.rememberCheck.setText(QCoreApplication.translate("AutoFeedback", u"\u8bb0\u4f4f\u8d26\u53f7\u5bc6\u7801", None))
         self.stateLabel.setText("")
         self.label.setText(QCoreApplication.translate("AutoFeedback", u"\u5f53\u524d\u72b6\u6001\uff1a", None))
+        self.settingGroup.setTitle(QCoreApplication.translate("AutoFeedback", u"\u8bbe\u7f6e", None))
+        self.displayCheck.setText(QCoreApplication.translate("AutoFeedback", u"\u542f\u7528\u6d4f\u89c8\u5668\u754c\u9762", None))
+        self.cacheLabel.setText(QCoreApplication.translate("AutoFeedback", u"\u9a71\u52a8\u7f13\u5b58\u5929\u6570", None))
     # retranslateUi
 

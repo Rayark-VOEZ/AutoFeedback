@@ -10,6 +10,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 # 使用webdriver_manager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
+from config import Config
+
 
 class Browser(QObject):
     FEEDBACK_PROGRESS = Signal(str)
@@ -33,8 +35,7 @@ class Browser(QObject):
         self.__isAnonymous = isAnonymous
         self.__random = random.Random()
 
-    async def download_driver(self):
-        return
+        self.config = Config()
 
     @Slot()
     def feedback_main(self) -> None:
@@ -45,19 +46,20 @@ class Browser(QObject):
 
         """ 配置驱动 """
         self.FEEDBACK_PROGRESS.emit("正在下载浏览器驱动...")
-        self.service = EdgeService(EdgeChromiumDriverManager(path="./").install())
-
+        # todo: 可选webdriver缓存天数, 默认7天
+        self.service = EdgeService(EdgeChromiumDriverManager(path="./", cache_valid_range=self.config.get_webdriver_cache_day()).install())
 
         """ 配置浏览器启动参数 """
         self.FEEDBACK_PROGRESS.emit("配置浏览器启动参数...")
         self.options = webdriver.EdgeOptions()
-        # self.options.add_argument("--headless")  # 无头模式
-        self.options.add_argument("--disable-gpu")  # 禁用GPU加速
+        # todo: 可选是否关闭浏览器界面, 默认关闭
+        if not self.config.get_display_browser():
+            self.options.add_argument("--headless")  # 无头模式
+            self.options.add_argument("--disable-gpu")  # 禁用GPU加速
         self.options.add_experimental_option("excludeSwitches", ["enable-logging"])
 
         """ 配置浏览器 """
         self.FEEDBACK_PROGRESS.emit("配置浏览器...")
-        # self.driver = webdriver.Edge(service=self.service, options=self.options)
         self.driver = webdriver.Edge(service=self.service, options=self.options)  # 使用webdriver_manager
 
         """ 配置等待器 """
@@ -144,7 +146,6 @@ class Browser(QObject):
             self.FEEDBACK_PROGRESS.emit("正在填写反馈表单...")
             radio_groups = self.driver.find_elements(By.CLASS_NAME, 'el-radio-group')
             for radio_group in radio_groups:
-                # radio_group.find_elements(By.CLASS_NAME, 'el-radio')[1].click()
                 radio_group.find_elements(By.CLASS_NAME, 'el-radio')[self.__random.choice(self.__level_range)].click()
             textarea = self.driver.find_element(By.TAG_NAME, 'textarea')
             textarea.send_keys(self.__suggestion)
@@ -155,8 +156,7 @@ class Browser(QObject):
         try:
             pass
             # 等待元素加载完成
-            # self.wait.until(EC.visibility_of_element_located((By.XPATH,
-            #                                                   '/html/body/div[1]/div/section/section/div/div[1]/div/div/div[1]/div[2]/div[1]/div/div/div[2]/div[16]/div[3]/button')))
+            self.wait.until(EC.visibility_of_element_located((By.CLASS_NAME, 'ml20')))
         except Exception:
             self.driver.quit()
             self.FEEDBACK_ERROR.emit("反馈表单提交失败！")
@@ -165,15 +165,6 @@ class Browser(QObject):
 
             button = self.driver.find_element(By.CLASS_NAME, 'ml20')
             button.click()
-
-            # buttons = self.driver.find_elements(By.CLASS_NAME, 'el-button')
-            # button = buttons[len(buttons) - 1]
-            # button.click()
-
-            # submit_button = self.driver.find_element(By.XPATH, '/html/body/div[1]/div/section/section/div/div[1]/div/div/div[1]/div[2]/div[1]/div/div/div[2]/div[16]/div[3]/button')
-            # submit_button = self.driver.find_element(By.XPATH, '/html/body/div[1]/div/section/section/div/div[1]/div/div/div[1]/div[2]/div[1]/div/div/div[2]/div[13]/div[3]/button')
-
-            # submit_button.click()
 
         """ 退出浏览器 """
         self.driver.quit()

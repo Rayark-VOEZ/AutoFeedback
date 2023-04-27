@@ -1,12 +1,13 @@
-import json
-import os.path
 import sys
 
 from PySide6.QtCore import Slot, QThread, Signal, Qt
 from PySide6.QtWidgets import QApplication, QWidget, QMessageBox
 
-from AutoFeedback import Ui_AutoFeedback
-from Browser import Browser
+from auto_feedback import Ui_AutoFeedback
+from browser import Browser
+from config import Config
+
+VERSION = "v2.3"
 
 
 class Main(QWidget):
@@ -18,68 +19,81 @@ class Main(QWidget):
         self.ui.setupUi(self)
 
         self.thread = QThread()
+        self.config = Config()
 
         self.state_label = self.ui.stateLabel
-        self.usernameEdit = self.ui.usernameEdit
-        self.passwordEdit = self.ui.passwordEdit
+        self.username_edit = self.ui.usernameEdit
+        self.password_edit = self.ui.passwordEdit
         self.__suggestionEdit = self.ui.suggestionEdit
-        self.__aCheck = self.ui.ACheck
-        self.__bCheck = self.ui.BCheck
-        self.__cCheck = self.ui.CCheck
-        self.__dCheck = self.ui.DCheck
-        self.__rememberCheck = self.ui.rememberCheck
-        self.__anonymityCheck = self.ui.anonymityCheck
-        self.__submitButton = self.ui.submitButton
+        self.a_check = self.ui.ACheck
+        self.b_check = self.ui.BCheck
+        self.c_check = self.ui.CCheck
+        self.d_check = self.ui.DCheck
+        self.remember_check = self.ui.rememberCheck
+        self.anonymity_check = self.ui.anonymityCheck
+        self.display_check = self.ui.displayCheck
+        self.cache_spin = self.ui.cacheSpin
+        self.submit_button = self.ui.submitButton
         self.userinfo_group = self.ui.userinfoGroup
         self.level_group = self.ui.levelGroup
         self.suggestion_group = self.ui.suggestionGroup
+        self.setting_group = self.ui.settingGroup
 
-        self.__aCheck.clicked.connect(self.__on_aCheck_clicked)
-        self.__bCheck.clicked.connect(self.__on_bCheck_clicked)
-        self.__cCheck.clicked.connect(self.__on_cCheck_clicked)
-        self.__dCheck.clicked.connect(self.__on_dCheck_clicked)
-        self.__submitButton.clicked.connect(self.__on_submitButton_clicked)
-
-        self.__load_config()
+        self.a_check.clicked.connect(self.__on_aCheck_clicked)
+        self.b_check.clicked.connect(self.__on_bCheck_clicked)
+        self.c_check.clicked.connect(self.__on_cCheck_clicked)
+        self.d_check.clicked.connect(self.__on_dCheck_clicked)
+        self.submit_button.clicked.connect(self.__on_submitButton_clicked)
 
         self.__level_range = set()
 
-    def __load_config(self):
-        if os.path.isfile("userinfo.json"):
-            config = json.load(open("userinfo.json", encoding="utf-8"))
-            self.usernameEdit.setText(config.get("username"))
-            self.passwordEdit.setText(config.get("password"))
-            self.__rememberCheck.setChecked(config.get("isRemember"))
+        # 初始化页面内容
+        self.cache_spin.setValue(self.config.get_webdriver_cache_day())
+        self.display_check.setChecked(self.config.get_display_browser())
+        userinfo = self.config.get_user_info()
+        self.username_edit.setText(userinfo.get("username"))
+        self.password_edit.setText(userinfo.get("password"))
+        self.remember_check.setChecked(userinfo.get("isRemember"))
+        self.__suggestionEdit.setText(f"-- Submit by AutoFeedback {VERSION}")
+
 
     @Slot()
     def __on_submitButton_clicked(self):
 
-        if not (self.__aCheck.isChecked() or self.__bCheck.isChecked() or self.__cCheck.isChecked() or self.__dCheck.isChecked()):
+        if not (
+                self.a_check.isChecked() or self.b_check.isChecked() or self.c_check.isChecked() or self.d_check.isChecked()):
             if QMessageBox.warning(self, "警告", "掌握程度不能为空！", QMessageBox.Ok) == QMessageBox.Ok:
                 return
 
-        self.__submitButton.setEnabled(False)
+        self.submit_button.setEnabled(False)
         self.userinfo_group.setEnabled(False)
         self.level_group.setEnabled(False)
         self.suggestion_group.setEnabled(False)
+        self.setting_group.setEnabled(False)
 
-        self.__submitButton.setText("正在执行...")
+        self.submit_button.setText("正在执行...")
 
         # 通过判断rememberCheck的状态来决定是否将账号密码写入userinfo.json
-        if self.__rememberCheck.isChecked():
+        if self.remember_check.isChecked():
             # 将账号密码写入userinfo.json
-            json.dump(
-                {"username": self.usernameEdit.text(), "password": self.passwordEdit.text(), "isRemember": True},
-                open("userinfo.json", "w", encoding="utf-8"))
+            # json.dump(
+            #     {"username": self.username_edit.text(), "password": self.password_edit.text(), "isRemember": True},
+            #     open("userinfo.json", "w", encoding="utf-8"))
+            # todo: 优化
+            self.config.set_user_info(self.username_edit.text(), self.password_edit.text(), True)
         else:
             # 移除userinfo.json
-            if os.path.isfile("userinfo.json"):
-                os.remove("userinfo.json")
+            # if os.path.isfile("userinfo.json"):
+            #     os.remove("userinfo.json")
+            self.config.set_user_info("", "", False)
+        self.config.set_webdriver_cache_day(self.cache_spin.value())
+        self.config.set_display_browser(self.display_check.isChecked())
+        self.config.save_config()
 
-        __username = self.usernameEdit.text()
-        __password = self.passwordEdit.text()
+        __username = self.username_edit.text()
+        __password = self.password_edit.text()
         __suggestion = self.__suggestionEdit.toPlainText()
-        __isAnonymous = self.__anonymityCheck.isChecked()
+        __isAnonymous = self.anonymity_check.isChecked()
 
         self.browser = Browser(__username, __password, list(self.__level_range), __suggestion, __isAnonymous)
         self.browser.moveToThread(self.thread)
@@ -152,7 +166,8 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     window = Main()
-    window.setWindowFlags(window.windowFlags() | Qt.WindowStaysOnTopHint)
+    # window.setWindowFlags(window.windowFlags() | Qt.WindowStaysOnTopHint)
+    window.setWindowTitle(f"AutoFeedback {VERSION}")
     window.show()
 
     sys.exit(app.exec())
